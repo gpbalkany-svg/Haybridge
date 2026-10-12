@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hayridge Investment Group Corp</title>
+<meta name="description" content="Hayridge Investment Group Corp: major US stocks and gold, with every big price move linked to the event behind it.">
+<style>
+html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* Layout: an early-2000s "private offshore desk" site. Pinstriped black-green ground, gold ridge borders, Times New Roman headers, Courier numbers, blinking LIVE. Portrait + name + clocks on top, then the chart pane is the first thing below on every screen size. Single dark look by design. */
+:root {
+  --ink-0: #020c06;      /* pinstripe ground */
+  --ink-1: #000000;      /* table fill */
+  --ink-2: #0e2416;      /* hover rows */
+  --line: #123a20;       /* chart grid, rules */
+  --fg: #f2f2e8;
+  --dim: #a9a98f;
+  --faint: #5f6a50;
+  --amber: #e8c15a;      /* gold: plot line, labels */
+  --amber-ink: #1b1200;
+  --key: #ffe45c;        /* bright gold highlight */
+  --gold-hi: #fff2b0; --gold-mid: #d9a93a; --gold-lo: #7a5410;
+  --sel: #000066;        /* old-school navy selection */
+  --up: #39ff14;         /* neon green */
+  --down: #ff2a2a;
+  --wire: #33ccff;       /* 2002 link blue */
+  --font-mark: "Times New Roman", Times, Georgia, serif;
+  --font-ui: Verdana, Tahoma, Geneva, sans-serif;
+  --font-data: "Courier New", Courier, monospace;
+  --fs-xs: 0.625rem; --fs-s: 0.6875rem; --fs-m: 0.75rem; --fs-l: 0.9375rem; --fs-xl: 1.5rem;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { color: var(--fg); font-family: var(--font-ui); font-size: var(--fs-m); line-height: 1.35;
+  background-color: var(--ink-0);
+  background-image: repeating-linear-gradient(90deg, rgba(232,193,90,0.07) 0 1px, transparent 1px 7px); }
+* { box-sizing: border-box; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--wire); text-decoration: underline; }
+a:hover { color: var(--key); }
+:focus-visible { outline: 1px dotted var(--key); outline-offset: 1px; }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--dim); }
+@keyframes blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+.blink { animation: blink 1s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .blink { animation: none; } }
+
+#app { display: flex; flex-direction: column; min-height: 100%; max-width: 1600px; margin-inline: auto; }
+
+/* ---------- masthead ---------- */
+.top { display: flex; align-items: center; gap: 10px 20px; flex-wrap: wrap; padding: 10px 16px;
+  background: linear-gradient(180deg, #0b2a17 0%, #03120a 60%, #000 100%); border: 3px ridge var(--gold-mid); border-top: 0; }
+.brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.logo { width: 150px; height: 150px; display: block; flex: none; border: 6px ridge var(--gold-mid); outline: 1px solid #000; box-shadow: 0 0 18px rgba(232,193,90,0.35), 6px 8px 0 rgba(0,0,0,0.8); filter: contrast(1.25) brightness(0.92) sepia(0.15); }
+.brand-words { display: flex; flex-direction: column; line-height: 1; min-width: 0; gap: 4px; }
+.brand .mark { font-family: var(--font-mark); font-weight: bold; font-size: 3rem; letter-spacing: 0.06em; text-transform: uppercase;
+  background: linear-gradient(180deg, var(--gold-hi) 0%, var(--key) 30%, var(--gold-mid) 55%, var(--gold-lo) 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(2px 2px 0 #000) drop-shadow(0 0 1px #000); }
+.brand .sub { font-family: var(--font-mark); font-size: 0.95rem; letter-spacing: 0.32em; color: var(--fg); font-weight: bold; white-space: nowrap; text-shadow: 1px 1px 0 #000; }
+.brand .tagline { font-family: var(--font-ui); font-size: var(--fs-xs); letter-spacing: 0.25em; color: var(--amber); text-transform: uppercase; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.brand .live { color: var(--down); font-weight: bold; letter-spacing: 0.1em; }
+.clocks { display: grid; grid-template-columns: repeat(2, auto); gap: 4px 10px; margin-left: auto; }
+.clk { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 3px 8px; background: #000; border: 2px inset #6b5420; }
+.k { font-size: var(--fs-xs); letter-spacing: 0.06em; color: var(--amber); font-weight: bold; text-transform: uppercase; }
+.clocks .num { font-size: var(--fs-l); color: var(--up); font-weight: bold; text-shadow: 0 0 6px rgba(57,255,20,0.6); }
+.clk.mkt { grid-column: 1 / -1; justify-content: center; }
+.pill { font-family: var(--font-data); font-size: var(--fs-xs); font-weight: bold; padding: 0 6px; border: 1px solid currentColor; }
+.pill.open { color: var(--up); } .pill.pre, .pill.post { color: var(--key); } .pill.closed { color: var(--down); }
+
+/* ---------- command line ---------- */
+.cmdline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 6px 16px; background: #000; border-inline: 3px ridge var(--gold-mid); }
+.cmd { flex: 1 1 240px; display: flex; align-items: stretch; max-width: 420px; background: #fff; border: 2px inset #999; }
+.cmd-k { color: #000; font-family: var(--font-data); font-weight: bold; padding: 0 4px 0 6px; display: flex; align-items: center; }
+.cmd input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 3px 4px; font-family: var(--font-data); font-size: var(--fs-l); font-weight: bold; text-transform: uppercase; color: #000; }
+.cmd input::placeholder { text-transform: none; color: #888; font-weight: normal; font-size: var(--fs-m); }
+.cmd input:focus { outline: none; }
+.gokey, .fkey { font-family: var(--font-mark); font-weight: bold; font-size: var(--fs-m); cursor: pointer; letter-spacing: 0.06em; color: #1b1200; padding: 2px 12px;
+  background: linear-gradient(180deg, var(--gold-hi) 0%, var(--key) 35%, var(--gold-mid) 70%, var(--gold-lo) 100%); border: 2px outset var(--gold-mid); text-shadow: 0 1px 0 rgba(255,255,255,0.5); }
+.gokey:active, .fkey:active { border-style: inset; }
+.fkeys { display: flex; gap: 4px; flex-wrap: wrap; }
+.fkey { font-size: var(--fs-s); padding: 1px 8px; }
+.fkey span { font-weight: normal; margin-left: 4px; }
+.fkey.red { background: linear-gradient(180deg, #ff9a9a 0%, #e01b1b 50%, #7a0000 100%); color: #fff; border-color: #b01010; text-shadow: 1px 1px 0 #000; }
+
+/* ---------- tape ---------- */
+.tape { overflow: hidden; background: #000; white-space: nowrap; border: 3px ridge var(--gold-mid); border-block: 2px solid var(--gold-lo); }
+.tape-track { display: inline-flex; animation: tape 60s linear infinite; }
+.tape:hover .tape-track { animation-play-state: paused; }
+.tape-item { display: inline-flex; gap: 6px; padding: 3px 14px; font-family: var(--font-data); font-size: var(--fs-m); font-weight: bold; border: 0; cursor: pointer; background: none; color: var(--fg); }
+.tape-item b { color: var(--key); }
+.tape-item::after { content: "\2605"; color: var(--gold-lo); margin-left: 12px; }
+@keyframes tape { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .tape { overflow-x: auto; } .tape-track { animation: none; } }
+
+/* ---------- panes ---------- */
+.grid { flex: 1; display: grid; grid-template-columns: 290px minmax(0, 1fr) 330px; grid-template-areas: "mk sec wire"; gap: 6px; padding: 6px 0; min-height: 0; }
+.p-markets { grid-area: mk; } .p-sec { grid-area: sec; } .p-wire { grid-area: wire; }
+.panel { min-width: 0; background: var(--ink-1); border: 3px ridge var(--gold-mid); display: flex; flex-direction: column; }
+.ph { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 8px;
+  background: linear-gradient(180deg, var(--gold-hi) 0%, var(--key) 30%, var(--gold-mid) 65%, var(--gold-lo) 100%); border-bottom: 2px solid #000; }
+.ph h2 { margin: 0; font-family: var(--font-mark); font-size: 0.875rem; letter-spacing: 0.06em; text-transform: uppercase; color: #1b1200; font-weight: bold; text-shadow: 0 1px 0 rgba(255,255,255,0.55); }
+.ph h2 .no { margin-right: 5px; }
+.ph-meta { font-size: var(--fs-xs); color: #2a1c00; font-family: var(--font-data); font-weight: bold; }
+@media (min-width: 1100px) {
+  html, body { overflow: hidden; }
+  #app { height: 100%; }
+  .grid { overflow: hidden; grid-template-rows: minmax(0, 1fr); }
+  .panel { overflow-y: auto; scrollbar-color: var(--gold-mid) #000; }
+}
+@media (min-width: 720px) and (max-width: 1099px) {
+  .grid { grid-template-columns: 250px minmax(0, 1fr); grid-template-areas: "sec sec" "mk wire"; }
+}
+
+/* ---------- watchlist ---------- */
+.wl-head, .wl-row { display: grid; grid-template-columns: minmax(0, 1fr) 58px 64px 62px; align-items: center; gap: 6px; padding: 3px 8px; }
+.wl-head { background: var(--sel); color: var(--key); font-size: var(--fs-xs); font-weight: bold; text-transform: uppercase; border-bottom: 1px solid var(--gold-lo); }
+.wl-head span:nth-child(n+3) { text-align: right; }
+.wl { display: flex; flex-direction: column; }
+.wl-row { border: 0; border-bottom: 1px dotted #2d3b22; background: transparent; text-align: left; cursor: pointer; }
+.wl-row:nth-child(even) { background: #061109; }
+.wl-row:hover { background: var(--ink-2); }
+.wl-row.sel, .wl-row.sel:nth-child(even) { background: var(--sel); outline: 1px solid var(--key); outline-offset: -1px; }
+.wl-sym { font-family: var(--font-data); font-weight: bold; color: var(--key); display: flex; flex-direction: column; min-width: 0; font-size: var(--fs-m); }
+.wl-sym small { font-family: var(--font-ui); font-weight: normal; color: var(--dim); font-size: var(--fs-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wl-sym .ev-dot { color: #fff; background: var(--down); font-size: 0.5625rem; margin-left: 4px; padding: 0 3px; font-weight: bold; }
+.wl-px, .wl-ch { font-family: var(--font-data); font-weight: bold; font-variant-numeric: tabular-nums; text-align: right; font-size: var(--fs-m); }
+.wl-row svg { display: block; width: 58px; height: 20px; }
+.wl-row .busy { color: var(--key); }
+.movers { display: flex; flex-direction: column; }
+.mv-row { display: grid; grid-template-columns: 56px minmax(0, 1fr) 72px; gap: 6px; padding: 3px 8px; font-family: var(--font-data); font-weight: bold; font-size: var(--fs-m); border: 0; border-bottom: 1px dotted #2d3b22; background: none; text-align: left; cursor: pointer; }
+.mv-row span:first-child { color: var(--key); }
+.mv-row:hover { background: var(--ink-2); }
+.mv-row span:nth-child(2), .mv-row span:nth-child(3) { text-align: right; }
+.seg { display: inline-flex; gap: 2px; }
+.seg button { padding: 1px 8px; font-family: var(--font-data); font-size: var(--fs-s); font-weight: bold; color: #ddd; cursor: pointer; background: #333; border: 2px outset #777; }
+.seg button[aria-pressed="true"] { background: linear-gradient(180deg, var(--gold-hi), var(--gold-mid)); color: #1b1200; border: 2px inset var(--gold-mid); }
+
+/* ---------- security ---------- */
+.sec-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 22px; padding: 8px 12px; border-bottom: 1px solid var(--gold-lo); background: linear-gradient(180deg, #071a0e, #000); }
+.sec-id h1 { margin: 0; font-family: var(--font-mark); font-size: 1.9rem; font-weight: bold; color: var(--key); line-height: 1; text-shadow: 2px 2px 0 #000; }
+.sec-id span { color: var(--dim); font-size: var(--fs-s); }
+.sec-px { display: flex; flex-direction: column; gap: 2px; }
+.sec-px b { font-family: var(--font-data); font-size: var(--fs-xl); font-weight: bold; line-height: 1; color: #fff; }
+.sec-px .chg { font-family: var(--font-data); font-size: var(--fs-m); font-weight: bold; }
+.sec-px small { color: var(--dim); font-size: var(--fs-xs); text-transform: uppercase; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); margin: 0; flex: 1 1 340px; border: 2px inset #4a3a12; background: #000; }
+.stats div { padding: 2px 7px; border-right: 1px dotted #4a3a12; min-width: 0; }
+.stats div:last-child { border-right: 0; }
+.stats dt { font-size: var(--fs-xs); text-transform: uppercase; color: var(--amber); font-weight: bold; }
+.stats dd { margin: 0; font-family: var(--font-data); font-weight: bold; font-size: var(--fs-m); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.actions { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; }
+.btn { padding: 2px 10px; font-size: var(--fs-s); cursor: pointer; font-weight: bold; color: #000; background: #c0c0c0; border: 2px outset #e8e8e8; }
+.btn:active { border-style: inset; }
+.btn.primary { background: linear-gradient(180deg, var(--gold-hi) 0%, var(--key) 35%, var(--gold-mid) 100%); border-color: var(--gold-mid); font-family: var(--font-mark); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.chart-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 6px 12px 0; }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: var(--fs-xs); color: var(--dim); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 9px; height: 9px; display: inline-block; }
+.lg-linked { background: var(--amber); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.lg-open { clip-path: polygon(50% 0, 100% 100%, 0 100%); background: transparent; box-shadow: inset 0 0 0 1.5px var(--dim); }
+.lg-ev { background: var(--wire); transform: rotate(45deg); width: 7px !important; height: 7px !important; }
+.chart { position: relative; padding: 4px 6px 0 12px; min-height: 240px; background: #000; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--font-data); font-size: 11px; font-weight: bold; fill: var(--up); }
+.chart .mk { cursor: pointer; }
+.chart .mk:hover { filter: brightness(1.3); }
+.tip { position: absolute; top: 8px; pointer-events: none; background: #ffffe1; color: #000; border: 1px solid #000; padding: 3px 6px; font-family: var(--font-ui); font-size: var(--fs-s); line-height: 1.45; max-width: 240px; z-index: 2; box-shadow: 2px 2px 0 rgba(0,0,0,0.6); }
+.tip b { color: #000066; }
+.tip .t-ev { border-top: 1px dotted #000; margin-top: 3px; padding-top: 3px; }
+.tip .up { color: #007a00; } .tip .down { color: #c00000; }
+.empty { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px 12px; color: var(--dim); max-width: 60ch; }
+.empty strong { color: var(--key); font-family: var(--font-mark); font-size: 1rem; }
+
+/* ---------- ledger ---------- */
+.ledger { display: flex; flex-direction: column; }
+.lg { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 12px; padding: 8px 12px; border-bottom: 1px dotted #2d3b22; scroll-margin-top: 60px; }
+.lg.focus { background: var(--sel); outline: 1px solid var(--key); outline-offset: -1px; }
+.lg-l { display: flex; flex-direction: column; gap: 1px; }
+.lg-date { font-size: var(--fs-xs); text-transform: uppercase; color: var(--amber); font-weight: bold; }
+.lg-r { font-family: var(--font-data); font-size: var(--fs-l); font-weight: bold; }
+.lg-meta { font-family: var(--font-data); font-size: var(--fs-xs); color: var(--dim); }
+.lg-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ev { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ev-top { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.kind { font-family: var(--font-data); font-size: var(--fs-xs); font-weight: bold; padding: 0 4px; background: var(--down); color: #fff; white-space: nowrap; }
+.kind.macro { background: var(--sel); color: var(--key); }
+.ev h3 { margin: 0; font-family: var(--font-mark); font-size: 0.95rem; font-weight: bold; line-height: 1.25; }
+.ev h3 a { color: var(--fg); text-decoration: none; }
+.ev h3 a:hover { color: var(--key); text-decoration: underline; }
+.ev p { margin: 0; color: #bdbda5; font-size: var(--fs-s); max-width: 72ch; }
+.ev .src { font-size: var(--fs-xs); color: var(--faint); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-style: italic; }
+.ev.none { color: var(--dim); font-size: var(--fs-s); flex-direction: row; gap: 10px; align-items: center; flex-wrap: wrap; }
+.tag { font-size: var(--fs-xs); color: var(--key); font-family: var(--font-data); }
+.lg.quiet .lg-r { font-size: var(--fs-m); }
+.headlines { border-left: 2px solid var(--gold-lo); padding-left: 8px; display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-s); }
+
+/* ---------- event form ---------- */
+.evform { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; padding: 10px 12px; border-bottom: 2px solid var(--gold-lo); background: #c0c0c0; color: #000; }
+.evform label { display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-xs); font-weight: bold; text-transform: uppercase; color: #000; min-width: 0; }
+.evform .wide { grid-column: 1 / -1; }
+.evform input, .evform select, .evform textarea { background: #fff; border: 2px inset #999; padding: 2px 4px; font-size: var(--fs-s); text-transform: none; color: #000; font-family: var(--font-ui); font-weight: normal; min-width: 0; }
+.evform textarea { min-height: 50px; resize: vertical; }
+.evform .row { grid-column: 1 / -1; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.formmsg { font-size: var(--fs-s); color: #a00000; font-weight: bold; }
+
+/* ---------- wire ---------- */
+.wire-filter { padding: 4px 8px; border-bottom: 1px dotted #2d3b22; display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.wi { padding: 7px 10px; border-bottom: 1px dotted #2d3b22; display: flex; flex-direction: column; gap: 3px; }
+.wi-top { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: var(--fs-xs); color: var(--dim); font-family: var(--font-data); font-weight: bold; }
+.chip { font-family: var(--font-data); font-weight: bold; font-size: var(--fs-s); background: none; border: 0; padding: 0; cursor: pointer; color: var(--wire); text-decoration: underline; }
+.chip:hover { color: var(--key); }
+.wi h3 { margin: 0; font-family: var(--font-mark); font-size: 0.95rem; font-weight: bold; line-height: 1.25; }
+.wi h3 a { color: var(--fg); text-decoration: none; }
+.wi h3 a:hover { color: var(--key); text-decoration: underline; }
+.wi p { margin: 0; font-size: var(--fs-s); color: #bdbda5; }
+.wi .react { font-family: var(--font-data); font-weight: bold; font-size: var(--fs-s); display: flex; gap: 10px; flex-wrap: wrap; }
+.wi .rm { margin-left: auto; border: 0; background: transparent; color: var(--faint); cursor: pointer; font-size: var(--fs-xs); text-decoration: underline; }
+.wi .rm.arm { color: #fff; background: var(--down); padding: 0 4px; text-decoration: none; }
+
+/* ---------- status + phone keys ---------- */
+.status { display: flex; gap: 2px 0; flex-wrap: wrap; padding: 0; font-size: var(--fs-xs); color: #000; font-family: var(--font-ui); background: #c0c0c0; border: 2px outset #e8e8e8; }
+.status > span { padding: 2px 10px; border-right: 2px groove #e8e8e8; }
+.status b { color: #000066; }
+.status .warn { color: #8a5a00; font-weight: bold; }
+.status .bad { color: #b00000; font-weight: bold; }
+.status .ie { font-style: italic; color: #333; }
+.tabs { display: none; }
+@media (max-width: 719px) {
+  body { background-image: repeating-linear-gradient(90deg, rgba(232,193,90,0.07) 0 1px, transparent 1px 6px); }
+  .top { padding: 8px 10px; gap: 8px; }
+  .brand { gap: 12px; width: 100%; }
+  .logo { width: 104px; height: 104px; border-width: 5px; }
+  .brand .mark { font-size: 2rem; }
+  .brand .sub { font-size: 0.7rem; letter-spacing: 0.18em; white-space: normal; }
+  .brand .tagline { font-size: 0.5625rem; letter-spacing: 0.14em; }
+  .clocks { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; margin-left: 0; gap: 3px; }
+  .clk { padding: 1px 6px; }
+  .clk .k { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.5625rem; }
+  .clocks .num { font-size: var(--fs-m); }
+  .cmdline { padding: 5px 10px; }
+  .fkeys { display: none; }
+  .tape-item { padding: 2px 10px; }
+  .grid { display: block; padding: 4px 0 0; }
+  #app[data-tab="markets"] .p-sec, #app[data-tab="markets"] .p-wire,
+  #app[data-tab="chart"] .p-markets, #app[data-tab="chart"] .p-wire,
+  #app[data-tab="wire"] .p-markets, #app[data-tab="wire"] .p-sec { display: none; }
+  .sec-head { padding: 6px 10px; gap: 4px 14px; }
+  .sec-id h1 { font-size: 1.5rem; }
+  .sec-head .stats { display: none; }
+  .actions .btn { font-size: 0.625rem; padding: 1px 8px; }
+  .chart-bar { padding: 4px 10px 0; }
+  .legend { display: none; }
+  .chart { min-height: 220px; }
+  .lg { grid-template-columns: 1fr; gap: 4px; }
+  .lg-l { flex-direction: row; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .status { padding-bottom: calc(48px + env(safe-area-inset-bottom, 0px)); }
+  .status .ie { display: none; }
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 5px 8px calc(5px + env(safe-area-inset-bottom, 0px)); background: #000; border-top: 3px ridge var(--gold-mid); }
+  .tabs button { padding: 7px 0; font-family: var(--font-mark); font-size: 0.8125rem; font-weight: bold; cursor: pointer; color: #ddd; background: #333; border: 2px outset #777; }
+  .tabs button[aria-selected="true"] { background: linear-gradient(180deg, var(--gold-hi) 0%, var(--key) 35%, var(--gold-mid) 70%, var(--gold-lo) 100%); color: #1b1200; border-color: var(--gold-mid); }
+}
+.actions { display: none !important; }
+</style>
+</head>
+<body>
+<div id="app" data-tab="chart">
+  <header class="top">
+    <div class="brand"><img class="logo" alt="Hayridge Investment Group Corp" width="150" height="150" src="data:image/jpeg;base64,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"><div class="brand-words"><span class="mark">Hayridge</span><span class="sub">INVESTMENT GROUP CORP</span><span class="tagline"><span class="live blink">&#9679; LIVE</span>Private Client Desk</span></div></div>
+    <div class="clocks">
+      <div class="clk"><span class="k">Levallois-Perret</span><span class="num" data-tz="Europe/Paris">--:--</span></div>
+      <div class="clk"><span class="k">Marrakech</span><span class="num" data-tz="Africa/Casablanca">--:--</span></div>
+      <div class="clk"><span class="k">Saint-Martin</span><span class="num" data-tz="America/Marigot">--:--</span></div>
+      <div class="clk"><span class="k">Panama</span><span class="num" data-tz="America/Panama">--:--</span></div>
+      <div class="clk mkt"><span class="k">Balkany Street</span><span class="pill closed" id="mktState">CLOSED</span></div>
+    </div>
+  </header>
+  <div class="cmdline">
+    <form class="cmd" id="cmd" autocomplete="off">
+      <label class="cmd-k" for="cmdInput">&gt;</label>
+      <input id="cmdInput" name="ticker" placeholder="Type a ticker, e.g. TSLA" autocapitalize="characters" spellcheck="false" maxlength="10">
+      <button class="gokey" type="submit">&lt;GO&gt;</button>
+    </form>
+    <div class="fkeys">
+      <button type="button" class="fkey" data-go="markets">WL<span>Watchlist</span></button>
+      <button type="button" class="fkey" data-go="chart">GP<span>Graph</span></button>
+      <button type="button" class="fkey" data-go="wire">EVT<span>Events</span></button>
+      <button type="button" class="fkey red" data-go="movers">MOST<span>Active</span></button>
+    </div>
+  </div>
+
+  <div class="tape" id="tapeWrap"><div class="tape-track" id="tape"></div></div>
+
+  <main class="grid">
+    <section class="panel p-markets" aria-label="Markets">
+      <div class="ph"><h2><span class="no">1)</span>Watchlist</h2><span class="ph-meta" id="wlMeta"></span></div>
+      <div class="wl-head" aria-hidden="true"><span>Ticker</span><span>30D</span><span>Last</span><span>%Chg</span></div>
+      <div class="wl" id="watchlist"></div>
+      <div class="ph" id="moversHead"><h2><span class="no">2)</span>Most active, US</h2><span class="ph-meta" id="moversMeta"></span></div>
+      <div class="movers" id="movers"></div>
+    </section>
+
+    <section class="panel p-sec" aria-label="Security">
+      <div class="sec-head" id="secHead"></div>
+      <div class="chart-bar">
+        <div class="seg" id="rangeSeg">
+          <button type="button" data-range="21" aria-pressed="false">1M</button>
+          <button type="button" data-range="63" aria-pressed="true">3M</button>
+          <button type="button" data-range="100" aria-pressed="false">5M</button>
+        </div>
+        <div class="legend">
+          <span><i class="lg-linked"></i>Move with event</span>
+          <span><i class="lg-open"></i>Unexplained move</span>
+          <span><i class="lg-ev"></i>Event, small reaction</span>
+        </div>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="ph"><h2><span class="no">3)</span>Price moves and the events behind them</h2><span class="ph-meta" id="ledgerMeta"></span></div>
+      <form class="evform" id="evForm" hidden>
+        <label>Ticker<input id="fSym" required maxlength="10"></label>
+        <label>Date<input id="fDate" type="date" required></label>
+        <label>Type<select id="fKind">
+          <option value="earnings">Earnings</option><option value="guidance">Guidance</option><option value="deal">Deal / M&amp;A</option>
+          <option value="product">Product</option><option value="regulatory">Regulatory</option><option value="legal">Legal</option>
+          <option value="analyst">Analyst</option><option value="management">Management</option><option value="macro">Macro</option><option value="other">Other news</option>
+        </select></label>
+        <label class="wide">Headline<input id="fTitle" required maxlength="160"></label>
+        <label class="wide">What happened<textarea id="fSummary" maxlength="500"></textarea></label>
+        <label>Source<input id="fSource" maxlength="60" placeholder="Reuters"></label>
+        <label>Link<input id="fUrl" type="url" placeholder="https://"></label>
+        <div class="row"><button class="btn primary" type="submit">Save event</button><button class="btn" type="button" id="fCancel">Cancel</button><span class="formmsg" id="fMsg"></span></div>
+      </form>
+      <div class="ledger" id="ledger"></div>
+    </section>
+
+    <section class="panel p-wire" aria-label="Event wire">
+      <div class="ph"><h2><span class="no">4)</span>Event wire</h2><span class="ph-meta" id="wireMeta"></span></div>
+      <div class="wire-filter">
+        <div class="seg" id="wireSeg">
+          <button type="button" data-wf="all" aria-pressed="true">All tickers</button>
+          <button type="button" data-wf="sel" aria-pressed="false" id="wfSel">Selected</button>
+        </div>
+      </div>
+      <div id="wire"></div>
+    </section>
+  </main>
+
+  <footer class="status" id="status"></footer>
+  <nav class="tabs" id="tabs" role="tablist">
+    <button type="button" role="tab" data-tab="markets" aria-selected="false">Markets</button>
+    <button type="button" role="tab" data-tab="chart" aria-selected="true">Chart</button>
+    <button type="button" role="tab" data-tab="wire" aria-selected="false">Wire</button>
+  </nav>
+</div>
+
+<script>
+(() => {
+"use strict";
+const STATIC = true;
+const AV = "Alpha Vantage MCP Server";
+const DAILY_LIMIT = 25;      // free Alpha Vantage key
+const RESERVE = 3;           // calls kept back for manual lookups
+const MAIN = "GLD";          // gold, via the SPDR Gold Shares ETF
+const DEFAULT_WL = ["GLD","AAPL","MSFT","NVDA","GOOGL","AMZN","META","TSLA","AVGO","AMD","INTC","NFLX","ORCL","JPM","V","XOM","LLY","UNH","WMT","T","VZ"];
+const NAMES = { GLD:"Gold · SPDR Gold Shares", AAPL:"Apple", MSFT:"Microsoft", NVDA:"Nvidia", GOOGL:"Alphabet", AMZN:"Amazon", META:"Meta Platforms", TSLA:"Tesla", AVGO:"Broadcom", AMD:"Advanced Micro Devices", INTC:"Intel", NFLX:"Netflix", ORCL:"Oracle", JPM:"JPMorgan Chase", V:"Visa", XOM:"Exxon Mobil", LLY:"Eli Lilly", UNH:"UnitedHealth", WMT:"Walmart", T:"AT&T", VZ:"Verizon", MKT:"Whole market" };
+const KIND = { earnings:"EARN", guidance:"GUID", deal:"M&A", product:"PROD", regulatory:"REG", legal:"LEGAL", analyst:"ANLY", management:"MGMT", macro:"MACRO", other:"NEWS" };
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const S = {
+  wl: DEFAULT_WL.slice(), wlFromDb: false,
+  series: {}, events: [], movers: null, budget: { day: "", used: 0 }, newswire: null, news: {},
+  sel: null, range: 63, wf: "all", tab: "chart", focus: null,
+  canWrite: null, mcp: null, db: null,
+  av: { state: "starting", msg: "" }, dbState: "starting",
+  fetching: new Set(), errs: {}, loaded: { series: false, meta: false, events: false },
+  autoRan: false, evVersion: 0
+};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const safeUrl = u => /^https?:\/\//i.test(u || "") ? u : "";
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("hig." + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("hig." + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ---------- formatting ---------- */
+const fmtPx = v => v == null || !isFinite(v) ? "—" : v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtPct = (r, d = 2) => r == null || !isFinite(r) ? "—" : (r > 0 ? "+" : r < 0 ? "−" : "") + Math.abs(r * 100).toFixed(d) + "%";
+const fmtChg = v => v == null || !isFinite(v) ? "—" : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2);
+const fmtVol = v => !isFinite(v) ? "—" : v >= 1e9 ? (v / 1e9).toFixed(2) + "B" : v >= 1e6 ? (v / 1e6).toFixed(1) + "M" : v >= 1e3 ? (v / 1e3).toFixed(0) + "K" : String(v);
+const cls = r => r > 0 ? "up" : r < 0 ? "down" : "flat";
+const dShort = s => s ? (+s.slice(8, 10)) + " " + MON[+s.slice(5, 7) - 1] : "—";
+const dLong = s => { if (!s) return "—"; const d = new Date(s + "T12:00:00Z"); return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getUTCDay()] + " " + dShort(s); };
+const nameOf = sym => NAMES[sym] || "";
+
+/* ---------- time ---------- */
+function zoneParts(tz, d = new Date()) {
+  const f = new Intl.DateTimeFormat("en-US", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false, weekday: "short" });
+  const p = {}; f.formatToParts(d).forEach(x => p[x.type] = x.value);
+  return { date: p.year + "-" + p.month + "-" + p.day, h: (+p.hour) % 24, m: +p.minute, wd: p.weekday };
+}
+function marketState() {
+  const n = zoneParts("America/New_York"); const t = n.h * 60 + n.m;
+  if (n.wd === "Sat" || n.wd === "Sun") return "closed";
+  if (t >= 570 && t < 960) return "open";
+  if (t >= 240 && t < 570) return "pre";
+  if (t >= 960 && t < 1200) return "post";
+  return "closed";
+}
+function expectedClose() {
+  const n = zoneParts("America/New_York"); const t = n.h * 60 + n.m;
+  let d = new Date(n.date + "T12:00:00Z");
+  const wk = x => { const g = x.getUTCDay(); return g > 0 && g < 6; };
+  if (!(wk(d) && t >= 990)) { do { d = new Date(d.getTime() - 864e5); } while (!wk(d)); }
+  return d.toISOString().slice(0, 10);
+}
+const utcDay = () => new Date().toISOString().slice(0, 10);
+function tickClock() {
+  const p = n => String(n).padStart(2, "0");
+  document.querySelectorAll("[data-tz]").forEach(el => { try { const z = zoneParts(el.dataset.tz); el.textContent = p(z.h) + ":" + p(z.m); } catch (e) { el.textContent = "--:--"; } });
+  const st = marketState(); const el = $("#mktState");
+  el.className = "pill " + st; el.textContent = { open: "OPEN", pre: "PRE-MKT", post: "AFTER-HRS", closed: "CLOSED" }[st];
+}
+
+/* ---------- series helpers ---------- */
+function quote(sym) {
+  const s = S.series[sym]; if (!s || !s.bars || s.bars.length < 2) return null;
+  const b = s.bars, n = b.length, last = b[n - 1], prev = b[n - 2];
+  return { px: last[4], chg: last[4] - prev[4], r: last[4] / prev[4] - 1, date: last[0], o: last[1], h: last[2], l: last[3], v: last[5] };
+}
+function isFresh(sym) {
+  const s = S.series[sym]; if (!s) return false;
+  return s.asOf >= expectedClose() || (Date.now() - (s.fetchedAt || 0)) < 6 * 3600e3;
+}
+const remaining = () => S.budget.day === utcDay() ? Math.max(0, DAILY_LIMIT - S.budget.used) : DAILY_LIMIT;
+
+const memo = new Map();
+function analyze(sym) {
+  const s = S.series[sym]; if (!s || !s.bars || s.bars.length < 3) return null;
+  const key = sym + "|" + s.asOf + "|" + s.fetchedAt + "|" + S.evVersion;
+  if (memo.has(key)) return memo.get(key);
+  const b = s.bars, n = b.length;
+  const ret = [null];
+  for (let i = 1; i < n; i++) ret.push(b[i][4] / b[i - 1][4] - 1);
+  const rs = ret.slice(1);
+  const mean = rs.reduce((a, x) => a + x, 0) / rs.length;
+  const sd = Math.sqrt(rs.reduce((a, x) => a + (x - mean) * (x - mean), 0) / Math.max(1, rs.length - 1)) || 0.01;
+  const thr = Math.max(2 * sd, 0.025);
+  const avgVol = i => { let a = 0, c = 0; for (let j = Math.max(0, i - 20); j < i; j++) { a += b[j][5]; c++; } return c ? a / c : b[i][5]; };
+  const idxOf = d => { if (!d || d < b[0][0] || d > b[n - 1][0]) return -1; for (let i = 0; i < n; i++) if (b[i][0] >= d) return i; return -1; };
+  const evs = S.events.filter(e => e.sym === sym || e.sym === "MKT").map(e => {
+    const i = idxOf(e.date);
+    const r1 = i >= 1 ? ret[i] : null;
+    const r3 = i >= 1 ? b[Math.min(i + 2, n - 1)][4] / b[i - 1][4] - 1 : null;
+    return { e, idx: i, r1, r3, linked: false };
+  });
+  const moves = [];
+  for (let i = 1; i < n; i++) {
+    if (Math.abs(ret[i]) < thr) continue;
+    const m = { idx: i, date: b[i][0], r: ret[i], z: ret[i] / sd, gap: b[i][1] / b[i - 1][4] - 1, volx: b[i][5] / avgVol(i), events: [] };
+    evs.forEach(x => {
+      if (x.idx === i) { m.events.push({ x, when: "same session" }); x.linked = true; }
+      else if (x.idx === i - 1 && x.e.sym !== "MKT") { m.events.push({ x, when: "prior session" }); x.linked = true; }
+    });
+    m.events.sort((a, c) => (a.x.e.sym === "MKT") - (c.x.e.sym === "MKT"));
+    m.explained = m.events.some(y => y.x.e.sym !== "MKT") ? "stock" : m.events.length ? "macro" : "none";
+    moves.push(m);
+  }
+  const out = { sd, thr, ret, moves, evs, n };
+  memo.set(key, out);
+  if (memo.size > 200) memo.delete(memo.keys().next().value);
+  return out;
+}
+
+/* ---------- Alpha Vantage via the viewer's connector ---------- */
+let lastCall = 0, chain = Promise.resolve();
+function payloadOf(res) {
+  let p = res && (res.payload !== undefined ? res.payload : null);
+  if (p == null && res && res.content && res.content[0] && res.content[0].text) p = res.content[0].text;
+  if (typeof p === "string") { try { p = JSON.parse(p); } catch (e) {} }
+  return p;
+}
+function limitOf(p) {
+  if (!p || typeof p !== "object") return null;
+  const raw = p.error ? (p.error.message || "") + " " + (p.error.detail || "") : (p.Information || p.Note || "");
+  if (!raw) return p.error ? "error" : null;
+  if (/premium endpoint/i.test(raw)) return "premium";
+  if (/per second|sparingly/i.test(raw) && !/standard api rate limit/i.test(raw)) return "burst";
+  if (/per day|daily/i.test(raw)) return "daily";
+  return p.error ? "error" : null;
+}
+function avCall(tool, input) {
+  const run = async () => {
+    if (!S.mcp) throw { code: "nomcp", message: "Live data is not available in this view." };
+    const go = async () => {
+      const wait = Math.max(0, lastCall + 1300 - Date.now()); if (wait) await sleep(wait);
+      lastCall = Date.now();
+      let res;
+      try { res = await S.mcp.callTool(AV, tool, input, { cache: false }); }
+      catch (e) { if (e && e.code === "tool_error") return { error: { message: e.message || "Alpha Vantage reported an error." } }; throw e; }
+      return payloadOf(res);
+    };
+    let p = await go(); let lim = limitOf(p);
+    if (lim === "burst") { await sleep(1500 + Math.random() * 800); p = await go(); lim = limitOf(p); }
+    if (lim !== "burst") bumpBudget(lim === "daily");
+    if (lim) {
+      const msg = p.error ? p.error.message : (p.Information || p.Note);
+      throw { code: "av_" + lim, message: msg || "Alpha Vantage refused the request." };
+    }
+    setAv("ok", "");
+    return p;
+  };
+  const pr = chain.then(run, run); chain = pr.catch(() => {}); return pr;
+}
+function bumpBudget(exhausted) {
+  const day = utcDay();
+  const used = S.budget.day === day ? S.budget.used : 0;
+  S.budget = { day, used: exhausted ? Math.max(DAILY_LIMIT, used) : used + 1 };
+  writeDoc("meta/budget", S.budget);
+}
+function setAv(state, msg) { S.av = { state, msg }; renderStatus(); }
+function handleErr(e, sym) {
+  const code = e && e.code || "error";
+  const map = {
+    needs_reauth: ["auth", "Reconnect Alpha Vantage in claude.ai Settings → Connectors."],
+    server_not_connected: ["missing", "Add the Alpha Vantage connector in claude.ai Settings → Connectors."],
+    selection_required: ["missing", "Choose which Alpha Vantage connection this page should use."],
+    not_in_manifest: ["denied", "Alpha Vantage is not allowed for this page. Allow it from the page's Permissions menu."],
+    approval_required: ["denied", "Approve Alpha Vantage access for this page, then press Refresh."],
+    blocked_by_policy: ["denied", "Your organization blocks Alpha Vantage for this page."],
+    av_daily: ["quota", "Today's 25 free Alpha Vantage calls are used. Resets at 04:00 Dubai time."],
+    av_premium: ["premium", "That data needs a premium Alpha Vantage key."],
+    nomcp: ["nomcp", "Live data needs the Claude app or claude.ai. Showing the last synced data."],
+    not_granted: ["nomcp", "Live data is off in this view. Showing the last synced data."],
+    capability_disabled: ["nomcp", "Live data is off in this view. Showing the last synced data."],
+    server_unavailable: ["down", "Alpha Vantage is not answering right now. Try Refresh in a minute."]
+  };
+  const [st, msg] = map[code] || ["error", (e && e.message) || "Alpha Vantage returned an error."];
+  if (sym) S.errs[sym] = { code: st, msg };
+  if (st !== "premium") setAv(st, msg);
+}
+
+async function fetchSeries(sym, manual) {
+  if (STATIC) { S.errs[sym] = { code: "nodata", msg: sym + " isn't tracked on this site yet." }; render(); return; }
+  if (S.fetching.has(sym)) return;
+  if (!S.mcp) { S.errs[sym] = { code: "nomcp", msg: "Live data is not available in this view." }; render(); return; }
+  if (remaining() <= 0 || (!manual && remaining() <= RESERVE)) { S.errs[sym] = { code: "quota", msg: "Saving today's remaining Alpha Vantage calls. Press Refresh to spend one on " + sym + "." }; render(); return; }
+  S.fetching.add(sym); delete S.errs[sym]; render();
+  try {
+    const p = await avCall("TIME_SERIES_DAILY", { symbol: sym, datatype: "json", outputsize: "compact" });
+    const ts = p && p["Time Series (Daily)"];
+    if (!ts) throw { code: "nodata", message: (p && p["Error Message"]) ? "Alpha Vantage has no daily prices for " + sym + "." : "No price data came back for " + sym + "." };
+    const bars = Object.keys(ts).sort().map(d => { const r = ts[d]; return [d, +r["1. open"], +r["2. high"], +r["3. low"], +r["4. close"], +r["5. volume"]]; });
+    const doc = { sym, asOf: bars[bars.length - 1][0], fetchedAt: Date.now(), bars };
+    S.series[sym] = doc;
+    writeDoc("series/" + sym, doc);
+  } catch (e) {
+    if (e && e.code === "nodata") S.errs[sym] = { code: "nodata", msg: e.message }; else handleErr(e, sym);
+  } finally { S.fetching.delete(sym); render(); }
+}
+async function fetchMovers() {
+  try {
+    const p = await avCall("TOP_GAINERS_LOSERS", {});
+    const ok = r => /^[A-Z]{1,5}$/.test(r.ticker) && +r.price >= 3;
+    const pick = a => (a || []).filter(ok).slice(0, 10).map(r => ({ t: r.ticker, px: +r.price, r: parseFloat(r.change_percentage) / 100, v: +r.volume }));
+    const asOf = String(p.last_updated || "").slice(0, 10);
+    S.movers = { asOf, fetchedAt: Date.now(), active: pick(p.most_actively_traded), gainers: pick(p.top_gainers), losers: pick(p.top_losers) };
+    writeDoc("meta/movers", S.movers);
+  } catch (e) { handleErr(e); }
+  renderMovers();
+}
+async function fetchNews(sym) {
+  if (STATIC) return;
+  if (!S.mcp || remaining() <= RESERVE) return;
+  if (S.newswire && S.newswire.day === utcDay() && S.newswire.available === false) return;
+  const have = S.news[sym]; if (have && Date.now() - have.fetchedAt < 6 * 3600e3) return;
+  try {
+    const p = await avCall("NEWS_SENTIMENT", { tickers: sym, limit: 30, sort: "LATEST" });
+    const items = (p.feed || []).slice(0, 30).map(a => ({ title: a.title, url: a.url, source: a.source, date: String(a.time_published || "").replace(/^(\d{4})(\d{2})(\d{2}).*/, "$1-$2-$3"), s: a.overall_sentiment_label || "" }));
+    S.news[sym] = { sym, fetchedAt: Date.now(), items };
+    S.newswire = { day: utcDay(), available: true };
+    writeDoc("news/" + sym, S.news[sym]); writeDoc("meta/newswire", S.newswire);
+    render();
+  } catch (e) {
+    if (e && e.code === "av_premium") { S.newswire = { day: utcDay(), available: false }; writeDoc("meta/newswire", S.newswire); renderStatus(); }
+    else handleErr(e);
+  }
+}
+
+/* ---------- db ---------- */
+const writeQ = {};
+function writeDoc(path, data) {
+  if (!S.db || S.canWrite === false) return;
+  const prev = writeQ[path] || Promise.resolve();
+  writeQ[path] = prev.then(() => S.db.doc(path).set(JSON.parse(JSON.stringify(data)))).catch(e => {
+    if (e && e.code === "invalid_argument" && S.canWrite !== true) S.canWrite = false;
+  });
+}
+function subscribe() {
+  const db = S.db;
+  db.collection("series").onSnapshot(snap => {
+    snap.docs.forEach(d => { const v = d.data(); if (!v || !v.sym) return; const cur = S.series[v.sym]; if (!cur || (v.fetchedAt || 0) >= (cur.fetchedAt || 0)) S.series[v.sym] = v; });
+    S.loaded.series = true; S.dbState = "live"; render(); maybeAuto();
+  }, dbErr);
+  db.collection("events").onSnapshot(snap => {
+    S.events = snap.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(e => e && e.sym && e.date && e.title);
+    S.evVersion++; S.loaded.events = true; render();
+  }, dbErr);
+  db.collection("meta").onSnapshot(snap => {
+    snap.docs.forEach(d => {
+      const v = d.data(); if (!v) return;
+      if (d.id === "budget" && v.day) { if (v.day !== S.budget.day || v.used > S.budget.used) S.budget = { day: v.day, used: +v.used || 0 }; }
+      if (d.id === "movers") S.movers = v;
+      if (d.id === "newswire") S.newswire = v;
+      if (d.id === "watchlist" && Array.isArray(v.symbols) && v.symbols.length) { S.wl = v.symbols.slice(0, 60); if (!S.wl.includes(MAIN)) S.wl.unshift(MAIN); S.wlFromDb = true; }
+      if (d.id === "desk") S.desk = v;
+    });
+    S.loaded.meta = true; render(); maybeAuto();
+  }, dbErr);
+  db.collection("news").onSnapshot(snap => {
+    snap.docs.forEach(d => { const v = d.data(); if (v && v.sym) S.news[v.sym] = v; });
+    render();
+  }, dbErr);
+}
+function dbErr(e) { S.dbState = (e && e.code === "revoked") ? "off" : "error"; renderStatus(); }
+
+/* ---------- auto refresh, once per load ---------- */
+function maybeAuto() {
+  if (S.autoRan) return;
+  if (S.db && !(S.loaded.series && S.loaded.meta)) return;
+  S.autoRan = true;
+  if (!S.sel) pickDefault();
+  render();
+  autoRefresh();
+}
+async function autoRefresh() {
+  if (!S.mcp) { if (S.av.state === "starting") setAv("nomcp", "Live data needs the Claude app or claude.ai. Showing the last synced data."); return; }
+  if (!isFresh(S.sel)) await fetchSeries(S.sel, true);
+  if (S.canWrite !== false) {
+    const mv = S.movers;
+    if ((!mv || (mv.asOf || "") < expectedClose()) && (!mv || Date.now() - (mv.fetchedAt || 0) > 6 * 3600e3) && remaining() > RESERVE) await fetchMovers();
+    for (const sym of S.wl) {
+      if (remaining() <= RESERVE || ["quota", "auth", "missing", "denied", "nomcp"].includes(S.av.state)) break;
+      if (!isFresh(sym)) await fetchSeries(sym, false);
+    }
+  }
+  if (S.av.state === "starting") setAv("ok", "");
+  fetchNews(S.sel);
+}
+function pickDefault() { S.sel = MAIN; }
+
+/* ---------- actions ---------- */
+function select(sym, opts = {}) {
+  sym = String(sym || "").toUpperCase().trim();
+  if (!/^[A-Z][A-Z0-9.\-]{0,9}$/.test(sym)) return;
+  S.sel = sym; S.focus = null; store.set("sel", sym);
+  $("#evForm").hidden = true;
+  if (!S.series[sym] || (!isFresh(sym) && opts.fetch)) fetchSeries(sym, true);
+  fetchNews(sym);
+  if (opts.tab && window.matchMedia("(max-width: 719px)").matches) setTab("chart");
+  render();
+}
+function toggleWatch(sym) {
+  const i = S.wl.indexOf(sym);
+  if (i >= 0) S.wl.splice(i, 1); else S.wl.push(sym);
+  writeDoc("meta/watchlist", { symbols: S.wl });
+  render();
+}
+function setTab(t) { S.tab = t; $("#app").dataset.tab = t; store.set("tab", t); document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t))); if (t === "chart") requestAnimationFrame(drawChart); }
+function focusMove(idx) {
+  S.focus = idx; renderLedger();
+  const el = document.getElementById("mv-" + idx);
+  if (el) el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+}
+function openForm(sym, date) {
+  const f = $("#evForm"); f.hidden = false;
+  $("#fSym").value = sym || S.sel || ""; $("#fDate").value = date || expectedClose();
+  $("#fTitle").value = ""; $("#fSummary").value = ""; $("#fSource").value = ""; $("#fUrl").value = ""; $("#fKind").value = "other"; $("#fMsg").textContent = "";
+  f.scrollIntoView({ block: "nearest" }); $("#fTitle").focus();
+}
+
+/* ---------- render ---------- */
+function render() { renderTape(); renderWatchlist(); renderMovers(); renderSecHead(); drawChart(); renderLedger(); renderWire(); renderStatus(); }
+
+function spark(sym) {
+  const s = S.series[sym]; if (!s || !s.bars || s.bars.length < 5) return '<svg viewBox="0 0 64 22" aria-hidden="true"></svg>';
+  const c = s.bars.slice(-30).map(b => b[4]); const lo = Math.min(...c), hi = Math.max(...c), rg = hi - lo || 1;
+  const pts = c.map((v, i) => (i / (c.length - 1) * 62 + 1).toFixed(1) + "," + (20 - (v - lo) / rg * 18).toFixed(1)).join(" ");
+  const col = c[c.length - 1] >= c[0] ? "var(--up)" : "var(--down)";
+  return '<svg viewBox="0 0 64 22" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="' + col + '" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+}
+function recentEvents(sym) { const cut = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10); return S.events.filter(e => e.sym === sym && e.date >= cut).length; }
+
+function renderTape() {
+  const items = S.wl.map(sym => { const q = quote(sym); return '<button type="button" class="tape-item" data-sym="' + esc(sym) + '"><b>' + esc(sym) + "</b>" + (q ? '<span>' + fmtPx(q.px) + '</span><span class="' + cls(q.r) + '">' + fmtPct(q.r) + "</span>" : '<span class="flat">—</span>') + "</button>"; }).join("");
+  $("#tape").innerHTML = items + items;
+}
+function renderWatchlist() {
+  const have = S.wl.filter(s => S.series[s]).length;
+  $("#wlMeta").textContent = have + "/" + S.wl.length + " priced";
+  $("#watchlist").innerHTML = S.wl.map(sym => {
+    const q = quote(sym), ev = recentEvents(sym), busy = S.fetching.has(sym);
+    return '<button type="button" class="wl-row' + (sym === S.sel ? " sel" : "") + '" data-sym="' + esc(sym) + '" aria-pressed="' + (sym === S.sel) + '">' +
+      '<span class="wl-sym">' + esc(sym) + (ev ? '<span class="ev-dot" title="' + ev + ' events in 30 days">' + ev + " EV</span>" : "") + "<small>" + esc(nameOf(sym)) + "</small></span>" +
+      spark(sym) +
+      '<span class="wl-px">' + (busy ? '<span class="busy">loading</span>' : q ? fmtPx(q.px) : "—") + "</span>" +
+      '<span class="wl-ch ' + (q ? cls(q.r) : "flat") + '">' + (q ? fmtPct(q.r) : "") + "</span></button>";
+  }).join("");
+}
+function renderMovers() {
+  const m = S.movers, el = $("#movers");
+  if (!m || !m.active) { $("#moversMeta").textContent = ""; el.innerHTML = '<div class="empty"><span>Market-wide most active list loads with your first data sync.</span></div>'; return; }
+  $("#moversMeta").textContent = "close " + dShort(m.asOf);
+  const rows = m.active.slice(0, 10).map(r => '<button type="button" class="mv-row" data-sym="' + esc(r.t) + '"><span>' + esc(r.t) + "</span><span>" + fmtPx(r.px) + '</span><span class="' + cls(r.r) + '">' + fmtPct(r.r) + "</span></button>").join("");
+  el.innerHTML = rows || '<div class="empty"><span>No listed stocks above $3 in the most active list.</span></div>';
+}
+function renderSecHead() {
+  const sym = S.sel, el = $("#secHead");
+  if (!sym) { el.innerHTML = '<div class="sec-id"><h1>—</h1><span>Pick a stock from the watchlist</span></div>'; return; }
+  const q = quote(sym), A = analyze(sym), s = S.series[sym];
+  const inWl = S.wl.includes(sym);
+  let stats = "";
+  if (q && s) {
+    const b = s.bars; const lo = Math.min(...b.map(x => x[3])), hi = Math.max(...b.map(x => x[2]));
+    const v20 = b.slice(-21, -1).reduce((a, x) => a + x[5], 0) / Math.max(1, Math.min(20, b.length - 1));
+    const expl = A ? A.moves.filter(m => m.explained === "stock").length : 0, tot = A ? A.moves.length : 0;
+    stats = '<dl class="stats">' +
+      "<div><dt>Day range</dt><dd>" + fmtPx(q.l) + "–" + fmtPx(q.h) + "</dd></div>" +
+      "<div><dt>Volume</dt><dd>" + fmtVol(q.v) + ' <span class="tag">' + (v20 ? (q.v / v20).toFixed(1) + "× avg" : "") + "</span></dd></div>" +
+      "<div><dt>" + b.length + "-day range</dt><dd>" + fmtPx(lo) + "–" + fmtPx(hi) + "</dd></div>" +
+      "<div><dt>Typical day</dt><dd>±" + (A ? (A.sd * 100).toFixed(2) : "—") + "%</dd></div>" +
+      "<div><dt>Moves explained</dt><dd>" + expl + " of " + tot + "</dd></div></dl>";
+  }
+  const busy = S.fetching.has(sym);
+  el.innerHTML =
+    '<div class="sec-id"><h1>' + esc(sym) + "</h1><span>" + esc(nameOf(sym) || "US equity") + "</span></div>" +
+    '<div class="sec-px">' + (q ? "<b>" + fmtPx(q.px) + '</b><span class="chg ' + cls(q.r) + '">' + fmtChg(q.chg) + "  " + fmtPct(q.r) + "</span><small>Close · " + dLong(q.date) + "</small>" : "<b>—</b><small>" + (busy ? "Loading prices" : "No prices yet") + "</small>") + "</div>" +
+    stats +
+    '<div class="actions">' +
+      '<button type="button" class="btn" id="btnRefresh"' + (busy || !S.mcp ? " disabled" : "") + ">" + (busy ? "Loading…" : "Refresh prices") + "</button>" +
+      '<button type="button" class="btn" id="btnWatch">' + (inWl ? "Remove from watchlist" : "Add to watchlist") + "</button>" +
+      (S.canWrite !== false && S.db ? '<button type="button" class="btn" id="btnLog">Log an event</button>' : "") +
+    "</div>";
+}
+
+function niceTicks(a, b, count) {
+  const span = b - a || 1; const raw = span / count; const p = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * p).find(s => s >= raw) || 10 * p;
+  const out = []; for (let v = Math.ceil(a / step) * step; v <= b + 1e-9; v += step) out.push(+v.toFixed(6));
+  return out;
+}
+function drawChart() {
+  const host = $("#chart"); const sym = S.sel; const s = sym && S.series[sym];
+  if (!s || !s.bars || s.bars.length < 3) {
+    const err = sym && S.errs[sym]; const busy = sym && S.fetching.has(sym);
+    let msg;
+    if (busy) msg = "<strong>Loading " + esc(sym) + " from Alpha Vantage…</strong><span>Daily prices for the last 100 sessions.</span>";
+    else if (err) msg = "<strong>" + esc(err.msg) + "</strong>" + (S.mcp && err.code !== "nodata" ? '<button type="button" class="btn primary" data-act="load">Load ' + esc(sym) + "</button>" : "");
+    else if (!sym || (S.db && !S.loaded.series)) msg = "<strong>Opening the terminal…</strong><span>Reading the last synced prices and events.</span>";
+    else msg = "<strong>No prices for " + esc(sym) + " yet.</strong><span>One Alpha Vantage call loads 100 sessions of daily prices.</span>" + (S.mcp ? '<button type="button" class="btn primary" data-act="load">Load ' + esc(sym) + "</button>" : "");
+    host.innerHTML = '<div class="empty">' + msg + "</div>";
+    return;
+  }
+  const A = analyze(sym); const all = s.bars; const start = Math.max(0, all.length - S.range); const bars = all.slice(start); const n = bars.length;
+  const W = Math.max(280, Math.round(host.clientWidth - 24) || 640); const H = W < 560 ? 250 : 320;
+  const ml = 4, mr = 54, mt = 18, mb = 22; const ph = (H - mt - mb) * 0.76; const vt = mt + ph + 10; const vh = (H - mt - mb) - ph - 10; const pw = W - ml - mr;
+  let lo = Infinity, hi = -Infinity, vmax = 0;
+  bars.forEach(b => { lo = Math.min(lo, b[3]); hi = Math.max(hi, b[2]); vmax = Math.max(vmax, b[5]); });
+  const pad = (hi - lo) * 0.1 || hi * 0.02; const y0 = lo - pad, y1 = hi + pad;
+  const step = pw / n; const X = i => ml + step * (i + 0.5); const Y = v => mt + (y1 - v) / (y1 - y0) * ph;
+  const parts = [];
+  parts.push('<defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--amber);stop-opacity:0.22"/><stop offset="1" style="stop-color:var(--amber);stop-opacity:0"/></linearGradient></defs>');
+  niceTicks(y0, y1, 5).forEach(v => { const y = Y(v); if (y < mt - 2 || y > mt + ph + 2) return; parts.push('<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="var(--line)" stroke-width="1"/><text x="' + (W - mr + 6) + '" y="' + (y + 3).toFixed(1) + '">' + fmtPx(v) + "</text>"); });
+  let lastM = "";
+  bars.forEach((b, i) => {
+    const m = b[0].slice(0, 7);
+    const lab = n <= 25 ? (i % 5 === 0 ? dShort(b[0]) : "") : (m !== lastM && i > 0 ? MON[+b[0].slice(5, 7) - 1] : "");
+    if (m !== lastM) lastM = m;
+    if (lab) parts.push('<line x1="' + X(i).toFixed(1) + '" x2="' + X(i).toFixed(1) + '" y1="' + mt + '" y2="' + (vt + vh) + '" stroke="var(--line)" stroke-dasharray="2 4"/><text x="' + X(i).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' + lab + "</text>");
+  });
+  A.evs.filter(x => x.e.sym === "MKT" && x.idx >= start).forEach(x => { const xx = X(x.idx - start).toFixed(1); parts.push('<line x1="' + xx + '" x2="' + xx + '" y1="' + mt + '" y2="' + (mt + ph) + '" stroke="var(--wire)" stroke-opacity="0.45" stroke-dasharray="3 3"/>'); });
+  const bw = Math.max(1, step * 0.62);
+  bars.forEach((b, i) => { const prev = i > 0 ? bars[i - 1][4] : (start > 0 ? all[start - 1][4] : b[1]); const h = vmax ? b[5] / vmax * vh : 0; parts.push('<rect x="' + (X(i) - bw / 2).toFixed(1) + '" y="' + (vt + vh - h).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + (b[4] >= prev ? "var(--up)" : "var(--down)") + '" fill-opacity="0.35"/>'); });
+  const line = bars.map((b, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(b[4]).toFixed(1)).join("");
+  parts.push('<path d="' + line + "L" + X(n - 1).toFixed(1) + " " + (mt + ph) + "L" + X(0).toFixed(1) + " " + (mt + ph) + 'Z" fill="url(#gArea)"/>');
+  parts.push('<path d="' + line + '" fill="none" stroke="var(--amber)" stroke-width="1.6" stroke-linejoin="round"/>');
+  const lx = X(n - 1), ly = Y(bars[n - 1][4]);
+  parts.push('<circle cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) + '" r="3.2" fill="var(--amber)"/><rect x="' + (W - mr + 2) + '" y="' + (ly - 8).toFixed(1) + '" width="' + (mr - 2) + '" height="16" fill="var(--amber)"/><text x="' + (W - mr + 6) + '" y="' + (ly + 3.5).toFixed(1) + '" style="fill:var(--amber-ink);font-weight:600">' + fmtPx(bars[n - 1][4]) + "</text>");
+  parts.push('<rect id="hover" x="' + ml + '" y="' + mt + '" width="' + pw + '" height="' + (vt + vh - mt) + '" fill="transparent"/>');
+  parts.push('<line id="xh" x1="0" x2="0" y1="' + mt + '" y2="' + (vt + vh) + '" stroke="var(--dim)" stroke-width="1" visibility="hidden" pointer-events="none"/>');
+  A.evs.filter(x => x.e.sym !== "MKT" && x.idx >= start && !x.linked).forEach(x => { const cx = X(x.idx - start), cy = mt + ph - 7; parts.push('<path class="mk" data-ev="' + esc(x.e.id) + '" d="M' + cx.toFixed(1) + " " + (cy - 5) + "L" + (cx + 5).toFixed(1) + " " + cy + "L" + cx.toFixed(1) + " " + (cy + 5) + "L" + (cx - 5).toFixed(1) + " " + cy + 'Z" fill="var(--wire)"><title>' + esc(x.e.title) + "</title></path>"); });
+  A.moves.filter(m => m.idx >= start).forEach(m => {
+    const i = m.idx - start, b = bars[i], up = m.r > 0, cx = X(i), sz = 6;
+    const cy = up ? Y(b[2]) - 9 : Y(b[3]) + 9;
+    const d = up ? "M" + cx.toFixed(1) + " " + (cy - sz) + "L" + (cx + sz) + " " + (cy + sz * 0.7) + "L" + (cx - sz) + " " + (cy + sz * 0.7) + "Z" : "M" + cx.toFixed(1) + " " + (cy + sz) + "L" + (cx + sz) + " " + (cy - sz * 0.7) + "L" + (cx - sz) + " " + (cy - sz * 0.7) + "Z";
+    const linked = m.explained !== "none";
+    const col = up ? "var(--up)" : "var(--down)";
+    parts.push('<path class="mk" data-move="' + m.idx + '" d="' + d + '" fill="' + (linked ? col : "var(--ink-0)") + '" stroke="' + (linked ? "var(--amber)" : col) + '" stroke-width="' + (linked ? 1.2 : 1.6) + '"><title>' + dShort(m.date) + " " + fmtPct(m.r) + (linked ? " · " + esc(m.events[0].x.e.title) : " · no event on file") + "</title></path>");
+  });
+  host.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(sym) + ' daily closing price with flagged moves">' + parts.join("") + '</svg><div class="tip" id="tip" hidden></div>';
+  const svg = host.querySelector("svg"), tip = $("#tip"), xh = svg.querySelector("#xh");
+  const showAt = clientX => {
+    const r = svg.getBoundingClientRect(); const px = (clientX - r.left) * (W / r.width);
+    const i = Math.max(0, Math.min(n - 1, Math.floor((px - ml) / step))); const b = bars[i]; const gi = start + i;
+    const rr = A.ret[gi];
+    xh.setAttribute("x1", X(i)); xh.setAttribute("x2", X(i)); xh.setAttribute("visibility", "visible");
+    const evs = A.evs.filter(x => x.idx === gi).map(x => '<div class="t-ev">' + (x.e.sym === "MKT" ? "Macro · " : "") + esc(x.e.title) + "</div>").join("");
+    tip.innerHTML = "<b>" + dLong(b[0]) + "</b><br>O " + fmtPx(b[1]) + "  H " + fmtPx(b[2]) + "<br>L " + fmtPx(b[3]) + "  C " + fmtPx(b[4]) + '<br><span class="' + cls(rr) + '">' + fmtPct(rr) + "</span>  Vol " + fmtVol(b[5]) + evs;
+    tip.hidden = false;
+    const hostW = host.clientWidth; const left = X(i) * (r.width / W) + 24;
+    tip.style.left = (left + 250 > hostW ? Math.max(8, left - 270) : left) + "px";
+  };
+  svg.addEventListener("pointermove", e => showAt(e.clientX));
+  svg.addEventListener("pointerdown", e => showAt(e.clientX));
+  svg.addEventListener("pointerleave", () => { tip.hidden = true; xh.setAttribute("visibility", "hidden"); });
+}
+
+function evBlock(x, when) {
+  const e = x.e; const u = safeUrl(e.url);
+  return '<div class="ev"><div class="ev-top"><span class="kind' + (e.kind === "macro" || e.sym === "MKT" ? " macro" : "") + '">' + esc(KIND[e.kind] || "NEWS") + "</span>" + (when ? '<span class="tag">' + esc(when) + "</span>" : "") + "</div>" +
+    "<h3>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(e.title) + "</a>" : esc(e.title)) + "</h3>" +
+    (e.summary ? "<p>" + esc(e.summary) + "</p>" : "") +
+    '<div class="src">' + esc(e.source || (e.addedBy === "manual" ? "Logged by you" : "")) + (e.sym === "MKT" ? "<span>Market-wide</span>" : "") + "</div></div>";
+}
+function renderLedger() {
+  const sym = S.sel, el = $("#ledger"); const A = sym && analyze(sym);
+  if (!A) { el.innerHTML = ""; $("#ledgerMeta").textContent = ""; return; }
+  $("#ledgerMeta").textContent = "flag ≥ " + (A.thr * 100).toFixed(1) + "% day";
+  const news = S.news[sym] && S.news[sym].items || [];
+  const s = S.series[sym];
+  const items = [];
+  A.moves.forEach(m => items.push({ date: m.date, html: moveRow(m, news, s) }));
+  A.evs.filter(x => !x.linked && x.idx >= 1 && x.e.sym !== "MKT").forEach(x => items.push({ date: x.e.date, html:
+    '<article class="lg quiet"><div class="lg-l"><span class="lg-date">' + dLong(x.e.date) + '</span><span class="lg-r ' + cls(x.r1) + '">' + fmtPct(x.r1) + '</span><span class="lg-meta">3-day ' + fmtPct(x.r3) + '</span></div><div class="lg-body">' + evBlock(x, "reaction below the move threshold") + "</div></article>" }));
+  items.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+  const canLog = S.canWrite !== false && S.db;
+  el.innerHTML = items.length ? items.map(i => i.html).join("") : '<div class="empty"><strong>No outsized moves in the last ' + A.n + ' sessions.</strong><span>' + esc(sym) + " has stayed inside ±" + (A.thr * 100).toFixed(1) + "% every day.</span></div>";
+  function moveRow(m, news, s) {
+    const hl = news.filter(a => a.date === m.date || (m.idx > 0 && a.date === s.bars[m.idx - 1][0])).slice(0, 3);
+    const body = m.events.length ? m.events.map(y => evBlock(y.x, y.when)).join("") :
+      '<div class="ev none"><span>No event on file for this move.</span>' + (canLog ? '<button type="button" class="btn" data-log="' + esc(m.date) + '">Log the cause</button>' : "") + "</div>";
+    const heads = hl.length ? '<div class="headlines"><span class="k">Wire headlines</span>' + hl.map(a => { const u = safeUrl(a.url); return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(a.title) + "</a>" : "<span>" + esc(a.title) + "</span>"; }).join("") + "</div>" : "";
+    return '<article class="lg' + (S.focus === m.idx ? " focus" : "") + '" id="mv-' + m.idx + '"><div class="lg-l"><span class="lg-date">' + dLong(m.date) + '</span><span class="lg-r ' + cls(m.r) + '">' + fmtPct(m.r) + '</span><span class="lg-meta">' + Math.abs(m.z).toFixed(1) + "σ · gap " + fmtPct(m.gap, 1) + " · vol " + m.volx.toFixed(1) + '×</span></div><div class="lg-body">' + body + heads + "</div></article>";
+  }
+}
+function renderWire() {
+  const el = $("#wire");
+  $("#wfSel").textContent = S.sel || "Selected";
+  let evs = S.events.slice();
+  if (S.wf === "sel" && S.sel) evs = evs.filter(e => e.sym === S.sel || e.sym === "MKT");
+  evs.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : (b.addedAt || 0) - (a.addedAt || 0));
+  $("#wireMeta").textContent = S.events.length ? S.events.length + " events" : "";
+  if (!evs.length) {
+    el.innerHTML = '<div class="empty">' + (S.db && !S.loaded.events ? "<strong>Reading the event log…</strong>" : "<strong>No events logged yet.</strong><span>Each event is a dated cause, like earnings, a guidance cut or a rate decision. Logged events are matched to price moves on the chart.</span>") + "</div>";
+    return;
+  }
+  const owner = S.canWrite !== false && S.db;
+  el.innerHTML = evs.slice(0, 120).map(e => {
+    let react = "";
+    if (e.sym !== "MKT") { const A = analyze(e.sym); const x = A && A.evs.find(y => y.e.id === e.id); if (x && x.idx >= 1) react = '<div class="react"><span>Day <span class="' + cls(x.r1) + '">' + fmtPct(x.r1) + '</span></span><span>3-day <span class="' + cls(x.r3) + '">' + fmtPct(x.r3) + "</span></span></div>"; }
+    const u = safeUrl(e.url);
+    return '<div class="wi"><div class="wi-top"><button type="button" class="chip" data-sym="' + esc(e.sym === "MKT" ? (S.sel || "NVDA") : e.sym) + '">' + esc(e.sym === "MKT" ? "MARKET" : e.sym) + '</button><span class="kind' + (e.sym === "MKT" || e.kind === "macro" ? " macro" : "") + '">' + esc(KIND[e.kind] || "NEWS") + "</span><span>" + dLong(e.date) + "</span>" + (owner ? '<button type="button" class="rm" data-rm="' + esc(e.id) + '">Remove</button>' : "") + "</div>" +
+      "<h3>" + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(e.title) + "</a>" : esc(e.title)) + "</h3>" + (e.summary ? "<p>" + esc(e.summary) + "</p>" : "") + react +
+      (e.source ? '<div class="react" style="color:var(--faint)">' + esc(e.source) + "</div>" : "") + "</div>";
+  }).join("");
+}
+function renderStatus() {
+  const latest = Object.values(S.series).reduce((a, s) => s.asOf > a ? s.asOf : a, "");
+  $("#status").innerHTML =
+    "<span>PRICES <b>end of day</b>" + (latest ? " · last close <b>" + dShort(latest) + "</b>" : "") + "</span>" +
+    "<span>UPDATED <b>" + (S.updatedAt ? esc(String(S.updatedAt).slice(0, 16).replace("T", " ")) + " UTC" : "—") + "</b> · nightly</span>" +
+    "<span>EVENT LOG <b>" + S.events.length + " events</b></span>" +
+    (S.dataState === "missing" ? '<span class="warn">Prices appear after the first nightly update runs.</span>' : "") +
+    '<span class="ie">Best viewed in Internet Explorer 6.0 at 1024&times;768</span>';
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go],[data-sym],[data-range],[data-wf],[data-tab],[data-move],[data-ev],[data-log],[data-rm],[data-act],#btnRefresh,#btnWatch,#btnLog,#fCancel");
+  if (!t) return;
+  if (t.dataset.rm) {
+    if (!t.classList.contains("arm")) { t.classList.add("arm"); t.textContent = "Confirm remove"; setTimeout(() => { if (t.isConnected) { t.classList.remove("arm"); t.textContent = "Remove"; } }, 4000); return; }
+    S.db && S.db.doc("events/" + t.dataset.rm).delete().catch(() => {});
+    return;
+  }
+  if (t.dataset.go) {
+    const g = t.dataset.go, phone = window.matchMedia("(max-width: 719px)").matches;
+    const tab = g === "movers" ? "markets" : g;
+    if (phone) setTab(tab);
+    const target = g === "movers" ? $("#moversHead") : g === "markets" ? $(".p-markets") : g === "chart" ? $(".p-sec") : $(".p-wire");
+    if (target) target.scrollIntoView({ block: "start", behavior: "auto" });
+    if (g === "chart") $("#cmdInput").focus();
+    return;
+  }
+  if (t.dataset.range) { S.range = +t.dataset.range; store.set("range", S.range); document.querySelectorAll("#rangeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b === t))); drawChart(); return; }
+  if (t.dataset.wf) { S.wf = t.dataset.wf; document.querySelectorAll("#wireSeg button").forEach(b => b.setAttribute("aria-pressed", String(b === t))); renderWire(); return; }
+  if (t.dataset.tab && t.closest("#tabs")) { setTab(t.dataset.tab); return; }
+  if (t.dataset.move) { focusMove(+t.dataset.move); return; }
+  if (t.dataset.ev) { S.wf = "sel"; document.querySelectorAll("#wireSeg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.wf === "sel"))); renderWire(); if (window.matchMedia("(max-width: 719px)").matches) setTab("wire"); return; }
+  if (t.dataset.log) { openForm(S.sel, t.dataset.log); return; }
+  if (t.dataset.act === "load" || t.id === "btnRefresh") { fetchSeries(S.sel, true); return; }
+  if (t.id === "btnWatch") { toggleWatch(S.sel); return; }
+  if (t.id === "btnLog") { openForm(S.sel); return; }
+  if (t.id === "fCancel") { $("#evForm").hidden = true; return; }
+  if (t.dataset.sym) { select(t.dataset.sym, { tab: true }); return; }
+});
+$("#cmd").addEventListener("submit", e => {
+  e.preventDefault(); const v = $("#cmdInput").value.toUpperCase().trim();
+  if (!/^[A-Z][A-Z0-9.\-]{0,9}$/.test(v)) { $("#cmdInput").value = ""; return; }
+  $("#cmdInput").value = ""; $("#cmdInput").blur(); select(v, { tab: true, fetch: true });
+});
+$("#evForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const sym = $("#fSym").value.toUpperCase().trim(), date = $("#fDate").value, title = $("#fTitle").value.trim();
+  if (!/^([A-Z][A-Z0-9.\-]{0,9})$/.test(sym) || !date || !title) { $("#fMsg").textContent = "Add a ticker, a date and a headline."; return; }
+  const url = $("#fUrl").value.trim();
+  if (url && !safeUrl(url)) { $("#fMsg").textContent = "Links need to start with https://"; return; }
+  const id = sym + "_" + date + "_" + Math.random().toString(36).slice(2, 7);
+  try {
+    await S.db.collection("events").doc(id).set({ sym, date, title, summary: $("#fSummary").value.trim(), source: $("#fSource").value.trim(), url, kind: $("#fKind").value, addedBy: "manual", addedAt: Date.now() });
+    $("#evForm").hidden = true;
+  } catch (err) {
+    $("#fMsg").textContent = err && err.code === "invalid_argument" ? "Only the owner can log events on this terminal." : "Couldn't save. Try again in a moment.";
+  }
+});
+
+/* ---------- boot ---------- */
+async function boot() {
+  S.range = store.get("range", 63);
+  document.querySelectorAll("#rangeSeg button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.range === S.range)));
+  setTab("chart");
+  tickClock(); setInterval(tickClock, 15000);
+  render();
+  let ro; if (window.ResizeObserver) { let w = 0; ro = new ResizeObserver(en => { const nw = Math.round(en[0].contentRect.width); if (Math.abs(nw - w) > 4) { w = nw; drawChart(); } }); ro.observe($("#chart")); }
+  try {
+    const get = u => fetch(u, { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null);
+    const [pr, ev] = await Promise.all([get("prices.json"), get("events.json")]);
+    if (pr) {
+      (pr.series || []).forEach(x => { if (x && x.sym && Array.isArray(x.bars)) S.series[x.sym] = x; });
+      if (pr.movers) S.movers = pr.movers;
+      if (Array.isArray(pr.watchlist) && pr.watchlist.length) S.wl = pr.watchlist.slice(0, 60);
+      S.updatedAt = pr.updatedAt || "";
+    }
+    if (Array.isArray(ev)) { S.events = ev.filter(e => e && e.sym && e.date && e.title).map((e, i) => Object.assign({ id: e.id || ("e" + i) }, e)); S.evVersion++; }
+    S.dataState = pr && pr.series && pr.series.length ? "ok" : "missing";
+  } catch (e) { S.dataState = "missing"; }
+  S.loaded.series = S.loaded.meta = S.loaded.events = true;
+  S.autoRan = true; S.sel = MAIN;
+  if (!S.series[MAIN]) S.errs[MAIN] = { code: "nodata", msg: "Prices appear after the first nightly update runs." };
+  render();
+}
+boot();
+})();
+</script>
+
+</body>
+</html>

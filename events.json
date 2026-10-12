@@ -1,0 +1,232 @@
+[
+ {
+  "id": "VZ_2026-10-09_spacex-spectrum",
+  "sym": "VZ",
+  "date": "2026-10-09",
+  "kind": "other",
+  "title": "Telecoms sink as SpaceX acquires spectrum for its own mobile service",
+  "summary": "Verizon fell alongside AT&T and T-Mobile after SpaceX secured 800 MHz spectrum from Grain Management for Starlink Mobile, raising the prospect of a well-funded new national carrier.",
+  "source": "Schaeffer's Investment Research",
+  "url": "https://www.schaeffersresearch.com/content/news/2026/10/09/at-t-telecom-stocks-sink-as-spacex-acquires-spectrum-portfolio"
+ },
+ {
+  "id": "T_2026-10-09_spacex-spectrum",
+  "sym": "T",
+  "date": "2026-10-09",
+  "kind": "other",
+  "title": "SpaceX lines up 800 MHz spectrum for Starlink Mobile, threatening the big carriers",
+  "summary": "SpaceX agreed to license up to 14 MHz of paired 800 MHz spectrum from Grain Management to power Starlink Mobile, a step toward becoming a full U.S. wireless carrier. Telecom stocks sold off on the new competitive threat; T-Mobile fell about 13%.",
+  "source": "The Motley Fool",
+  "url": "https://www.fool.com/investing/2026/10/09/why-at-and-t-stock-tumbled-today/"
+ },
+ {
+  "id": "INTC_2026-10-08_terafab",
+  "sym": "INTC",
+  "date": "2026-10-08",
+  "kind": "other",
+  "title": "Musk says Terafab is in talks with TSMC",
+  "summary": "Elon Musk said his Terafab chip project is negotiating a dedicated TSMC facility for Tesla, SpaceX and xAI, raising doubts about Intel's expected foundry role. Intel fell about 4% before the open.",
+  "source": "StocksToTrade",
+  "url": "https://stockstotrade.com/news/intel-corporation-intc-news-2026_10_08-2/"
+ },
+ {
+  "id": "MKT_2026-10-05_spx-7800",
+  "sym": "MKT",
+  "date": "2026-10-05",
+  "kind": "macro",
+  "title": "S&P 500 closes above 7,800 for the first time",
+  "summary": "Tech gains and cooler bond yields carried the index to a record close.",
+  "source": "CNBC",
+  "url": "https://www.cnbc.com/2026/10/05/stock-market-today-live-updates.html"
+ },
+ {
+  "id": "GLD_2026-09-30_month",
+  "sym": "GLD",
+  "date": "2026-09-30",
+  "kind": "other",
+  "title": "Gold ends September down 8.5% at $4,176/oz",
+  "summary": "The 10-year yield rose 53bp to 5.3% and the dollar gained 2%, while about $12B of futures positions were liquidated. Gold ETFs still took in roughly $10B over the month.",
+  "source": "World Gold Council",
+  "url": "https://www.gold.org/goldhub/research/gold-market-commentary-september-2026"
+ },
+ {
+  "id": "MKT_2026-09-16_fed-hike",
+  "sym": "MKT",
+  "date": "2026-09-16",
+  "kind": "macro",
+  "title": "Fed raises rates a quarter point to 3.75%–4%",
+  "summary": "The FOMC lifted its target range by 25 basis points and signaled more hikes may follow. The Dow fell about 600 points as bond yields climbed.",
+  "source": "CNBC",
+  "url": "https://www.cnbc.com/2026/09/16/fed-rate-decision-september-2026.html"
+ },
+ {
+  "id": "GLD_2026-09-16_fed-hike",
+  "sym": "GLD",
+  "date": "2026-09-16",
+  "kind": "macro",
+  "title": "Fed's first hike in three years weighs on gold as yields climb",
+  "summary": "The quarter-point hike, and signals that more could follow, pushed the 10-year Treasury yield toward a 19-year high and raised the cost of holding non-yielding gold.",
+  "source": "OroTracker",
+  "url": "https://orotracker.com/blog/why-is-gold-price-falling-2026"
+ },
+ {
+  "id": "ORCL_2026-09-10_q1",
+  "sym": "ORCL",
+  "date": "2026-09-10",
+  "kind": "earnings",
+  "title": "Oracle cloud infrastructure revenue more than doubles; backlog near $664B",
+  "summary": "Fiscal Q1 results beat estimates on triple-digit growth in Oracle Cloud Infrastructure, with remaining performance obligations of about $664B.",
+  "source": "CNBC",
+  "url": "https://www.cnbc.com/2026/09/10/oracle-orcl-q1-earnings-report-2027.html"
+ },
+ {
+  "id": "AVGO_2026-09-02_q3",
+  "sym": "AVGO",
+  "date": "2026-09-02",
+  "kind": "earnings",
+  "title": "Broadcom AI chip revenue triples to $16.7B",
+  "summary": "Q3 AI semiconductor revenue rose about 221%, and management outlined AI revenue of $115B for fiscal 2027.",
+  "source": "The Motley Fool",
+  "url": "https://www.fool.com/investing/2026/09/02/broadcom-earnings-ai-chip-sales-tripled-here-s-the-usd34-8-billion-number-investors-need-to-watch/"
+ },
+ {
+  "id": "NVDA_2026-08-26_q2",
+  "sym": "NVDA",
+  "date": "2026-08-26",
+  "kind": "earnings",
+  "title": "Nvidia Q2 revenue doubles to $96.2B; outlook implies about 70% growth",
+  "summary": "Revenue rose 106% from a year earlier with gross margin steady at 75%, though management expects a dip next quarter from memory costs. Its outlook implied growth near twice what analysts expected. Shares closed up 8.7% the next day on about double normal volume.",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-aug-27-212126760.html"
+ },
+ {
+  "id": "WMT_2026-08-20_q2",
+  "sym": "WMT",
+  "date": "2026-08-20",
+  "kind": "earnings",
+  "title": "Walmart beats and raises, and the stock sells off",
+  "summary": "Q2 results topped estimates and full-year guidance went up, yet shares fell sharply on the day.",
+  "source": "24/7 Wall St.",
+  "url": "https://247wallst.com/investing/2026/08/21/walmart-beat-earnings-and-raised-guidance-so-why-did-the-stock-crash/"
+ },
+ {
+  "id": "LLY_2026-08-05_q2",
+  "sym": "LLY",
+  "date": "2026-08-05",
+  "kind": "earnings",
+  "title": "Lilly beats and raises full-year guidance",
+  "summary": "Q2 revenue passed $23B on demand for its weight-loss and diabetes drugs, and the company lifted its 2026 outlook.",
+  "source": "CNBC",
+  "url": "https://www.cnbc.com/2026/08/05/eli-lilly-lly-earnings-q2-2026.html"
+ },
+ {
+  "id": "AMD_2026-08-04_q2",
+  "sym": "AMD",
+  "date": "2026-08-04",
+  "kind": "earnings",
+  "title": "AMD beats on revenue, slips after hours",
+  "summary": "Q2 revenue of $11.53B and EPS of $1.66 topped consensus but missed the whisper number, and shares fell in extended trading.",
+  "source": "Shacknews",
+  "url": "https://www.shacknews.com/article/150246/amd-q2-2026-earnings-results"
+ },
+ {
+  "id": "AMZN_2026-07-30_q2",
+  "sym": "AMZN",
+  "date": "2026-07-30",
+  "kind": "earnings",
+  "title": "Amazon beats as AWS growth reaches about 37%",
+  "summary": "AWS revenue rose to $42.2B with record margins and total revenue passed $200B, although current-quarter guidance was softer. Shares rose about 7% after hours.",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/stocks/articles/amazon-apple-beat-earnings-head-223100755.html"
+ },
+ {
+  "id": "AAPL_2026-07-30_q3",
+  "sym": "AAPL",
+  "date": "2026-07-30",
+  "kind": "earnings",
+  "title": "Apple posts a record June quarter, and the stock slips anyway",
+  "summary": "Revenue of $109.4B and EPS of $2.02 both beat estimates, but shares fell about 4% in after-hours trading.",
+  "source": "Yahoo Finance",
+  "url": "https://finance.yahoo.com/markets/stocks/articles/amazon-apple-beat-earnings-head-223100755.html"
+ },
+ {
+  "id": "MSFT_2026-07-29_q4",
+  "sym": "MSFT",
+  "date": "2026-07-29",
+  "kind": "earnings",
+  "title": "Microsoft beats on strong Azure growth",
+  "summary": "Fiscal Q4 results topped estimates on the strength of Azure. Shares surged the next session as investors rewarded its AI cloud business while punishing Meta's spending.",
+  "source": "CNBC",
+  "url": "https://www.cnbc.com/2026/07/30/microsoft-msft-meta-stock-today-earnings.html"
+ },
+ {
+  "id": "MKT_2026-07-29_fed-hold",
+  "sym": "MKT",
+  "date": "2026-07-29",
+  "kind": "macro",
+  "title": "Fed holds rates steady at its July meeting",
+  "summary": "The Fed left its target range unchanged while Treasury yields rose, on the same evening Microsoft and Meta reported.",
+  "source": "Quartz",
+  "url": "https://qz.com/microsoft-meta-stock-ai-earnings-premarket-073026"
+ },
+ {
+  "id": "META_2026-07-29_q2",
+  "sym": "META",
+  "date": "2026-07-29",
+  "kind": "earnings",
+  "title": "Meta's revenue outlook disappoints; free cash flow down about 91%",
+  "summary": "Heavy AI spending collapsed second-quarter free cash flow and the revenue forecast came in light. Shares fell 8–9% the next day, extending a record losing streak.",
+  "source": "CNBC",
+  "url": "https://www.cnbc.com/2026/07/30/microsoft-msft-meta-stock-today-earnings.html"
+ },
+ {
+  "id": "TSLA_2026-07-22_q2",
+  "sym": "TSLA",
+  "date": "2026-07-22",
+  "kind": "earnings",
+  "title": "Tesla misses on profit as auto margins shrink",
+  "summary": "Deliveries hit a record of about 480,000, but operating income fell roughly 57%, auto margins excluding credits slipped to 16.3% and free cash flow went negative. Shares fell about 16% over two sessions.",
+  "source": "24/7 Wall St.",
+  "url": "https://247wallst.com/investing/2026/07/27/earnings-misses-between-tesla-and-alphabet-only-one-deserved-punishment/"
+ },
+ {
+  "id": "GOOGL_2026-07-22_q2",
+  "sym": "GOOGL",
+  "date": "2026-07-22",
+  "kind": "earnings",
+  "title": "Alphabet's capex doubles as Google Cloud grows 82%",
+  "summary": "Cloud revenue reached about $24.8B and total revenue grew roughly 24%, but capital spending doubled to about $45B, free cash flow turned negative and buybacks were suspended. Shares fell about 6.5% over two sessions.",
+  "source": "24/7 Wall St.",
+  "url": "https://247wallst.com/investing/2026/07/27/earnings-misses-between-tesla-and-alphabet-only-one-deserved-punishment/"
+ },
+ {
+  "id": "UNH_2026-07-16_q2",
+  "sym": "UNH",
+  "date": "2026-07-16",
+  "kind": "earnings",
+  "title": "UnitedHealth beats and raises 2026 EPS outlook to $19.50–$20.00",
+  "summary": "Second-quarter results came in well ahead of estimates across its businesses and full-year guidance moved up.",
+  "source": "UnitedHealth Group",
+  "url": "https://www.unitedhealthgroup.com/newsroom/2026/2026-07-16-uhg-reports-second-quarter-2026-results.html"
+ },
+ {
+  "id": "NFLX_2026-07-16_q2",
+  "sym": "NFLX",
+  "date": "2026-07-16",
+  "kind": "guidance",
+  "title": "Netflix guides Q3 below estimates",
+  "summary": "Second-quarter results beat, but the third-quarter forecast disappointed and the company said it will report engagement less often. Shares hit a 52-week low the next day.",
+  "source": "CNBC",
+  "url": "https://www.cnbc.com/2026/07/16/netflix-nflx-earnings-q2-2026.html"
+ },
+ {
+  "id": "JPM_2026-07-14_q2",
+  "sym": "JPM",
+  "date": "2026-07-14",
+  "kind": "earnings",
+  "title": "JPMorgan Q2 beats as investment banking drives growth",
+  "summary": "Strong dealmaking and trading lifted second-quarter results above expectations.",
+  "source": "XTB",
+  "url": "https://www.xtb.com/en/market-analysis/jpmorgan-reports-strong-q2-earnings-as-investment-banking-drives-growth"
+ }
+]
